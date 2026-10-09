@@ -1,4 +1,4 @@
-const CACHE='treino-tecnico-policial-v1.2.0';
+const CACHE='treino-tecnico-policial-v1.2.1';
 const CORE=['./','./index.html','./styles.css','./app.js','./data.js','./config.js','./manifest.webmanifest','./assets/icons/icon-192.png','./assets/icons/icon-512.png','./assets/icons/icon-maskable-512.png','./assets/icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
