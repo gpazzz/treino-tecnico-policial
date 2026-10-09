@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#081621">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Treino PSP">
+  <meta name="format-detection" content="telephone=no">
+  <title>Treino Técnico-Policial — Estudo e Simulação</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="icon" href="assets/icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="loginGate" class="login-gate">
+    <div class="login-card card">
+      <span class="eyebrow">ACESSO AO TREINO</span>
+      <h1>Treino Técnico-Policial</h1>
+      <p>Entra com o teu número mecanográfico e PIN. O progresso fica associado à tua conta e sincroniza entre dispositivos.</p>
+
+      <div id="loginPanel">
+        <label class="field"><span>Número mecanográfico</span><input id="loginMechanical" inputmode="numeric" maxlength="6" autocomplete="username" placeholder="6 dígitos"></label>
+        <label class="field"><span>PIN</span><input id="loginPin" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password" placeholder="4 a 6 dígitos"></label>
+        <button id="loginBtn" class="btn primary full">Entrar</button>
+        <button id="showActivateBtn" class="btn ghost full" style="margin-top:8px">Primeiro acesso / Ativar conta</button>
+      </div>
+
+      <div id="activatePanel" class="hidden">
+        <label class="field"><span>Número mecanográfico</span><input id="activateMechanical" inputmode="numeric" maxlength="6" placeholder="6 dígitos"></label>
+        <label class="field"><span>Código de ativação</span><input id="activateCode" inputmode="numeric" maxlength="8" placeholder="8 dígitos"></label>
+        <div class="two-cols">
+          <label class="field"><span>Novo PIN</span><input id="activatePin" type="password" inputmode="numeric" maxlength="6" placeholder="4 a 6 dígitos"></label>
+          <label class="field"><span>Confirmar PIN</span><input id="activatePin2" type="password" inputmode="numeric" maxlength="6" placeholder="Repete o PIN"></label>
+        </div>
+        <button id="activateBtn" class="btn primary full">Ativar e entrar</button>
+        <button id="showLoginBtn" class="btn ghost full" style="margin-top:8px">Voltar ao login</button>
+      </div>
+
+      <p id="loginMsg" class="muted"></p>
+      <div class="inline-note"><b>Número não autorizado?</b> Contacta o administrador para o adicionar à lista e gerar um código de ativação.</div>
+    </div>
+  </div>
+
+  <div id="appShell" class="app-shell hidden">
+    <header class="topbar">
+      <button class="brand" data-go="home" aria-label="Início">
+        <span class="brand-mark" aria-hidden="true"><span class="ring"></span></span>
+        <span><strong>Treino Técnico-Policial</strong><small>40 perguntas · 60 minutos</small></span>
+      </button>
+      <div class="top-actions">
+        <span id="profileBadge" class="status-pill"></span>
+        <span id="offlineBadge" class="status-pill">● Offline disponível</span>
+        <button id="adminBtn" class="icon-btn hidden" title="Administração">⚙</button>
+        <button id="logoutBtn" class="icon-btn" title="Terminar sessão">⇥</button>
+        <button id="installBtn" class="icon-btn" title="Instalar aplicação" aria-label="Instalar aplicação">↧</button>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section id="view-home" class="view">
+        <div class="hero-card card">
+          <div>
+            <span class="eyebrow">BANCO DE TREINO</span>
+            <h1>Treina no formato do teste real.</h1>
+            <p><b id="bankCount">368</b> questões criadas exclusivamente a partir do material fornecido, com explicação e referência à fonte.</p>
+            <div class="hero-actions">
+              <button id="realExamBtn" class="btn primary">Simular teste real</button>
+              <button class="btn secondary" data-start-mode="practice">Treinar</button>
+            </div>
+          </div>
+          <div class="hero-score">
+            <div class="score-dial" id="homeDial"><div><b id="homeRate">—</b><span>acerto global</span></div></div>
+            <div class="mini-stats"><span><b id="homeAttempts">0</b> respostas</span><span><b id="coveragePct">0%</b> banco visto</span></div>
+          </div>
+        </div>
+
+        <div id="resumeCard" class="card resume-card hidden">
+          <div><span class="eyebrow">SESSÃO EM CURSO</span><h3 id="resumeTitle">Continuar teste</h3><p id="resumeMeta"></p></div>
+          <div class="row-actions"><button id="resumeBtn" class="btn primary">Continuar</button><button id="discardResumeBtn" class="btn ghost">Descartar</button></div>
+        </div>
+
+        <div class="quick-grid">
+          <button class="quick-card card" id="realExamQuick"><span class="quick-icon">◎</span><strong>Teste real</strong><small>40 perguntas · 60 min</small></button>
+          <button class="quick-card card" data-start-mode="practice"><span class="quick-icon">✓</span><strong>Treino livre</strong><small>Correção imediata</small></button>
+          <button class="quick-card card" id="unseenPracticeBtn"><span class="quick-icon">◌</span><strong>Ainda não vistas</strong><small id="unseenLabel">Cobrir todo o banco</small></button>
+          <button class="quick-card card" id="smartPracticeBtn"><span class="quick-icon">↻</span><strong>Rever erros</strong><small id="weakLabel">Perguntas que mais falhas</small></button>
+          <button class="quick-card card" data-go="study"><span class="quick-icon">▤</span><strong>Estudar</strong><small>Pesquisar perguntas e fontes</small></button>
+        </div>
+
+        <div class="section-head"><div><span class="eyebrow">PROGRESSO</span><h2>Por matéria</h2></div><button class="text-btn" data-go="stats">Ver estatísticas →</button></div>
+        <div id="topicOverview" class="topic-grid"></div>
+
+        <div class="source-note card">
+          <strong>Sobre as perguntas</strong>
+          <p>As questões são de treino e foram construídas a partir dos documentos fornecidos. Não são perguntas oficiais do exame. Em modo treino, cada resposta mostra uma explicação curta e a fonte usada.</p>
+          <p class="muted">Ferramenta pessoal de estudo. Não é uma aplicação oficial da PSP.</p>
+        </div>
+      </section>
+
+      <section id="view-session" class="view hidden">
+        <div class="session-top">
+          <button id="exitSessionBtn" class="icon-btn" aria-label="Sair">←</button>
+          <div class="session-progress"><div><strong id="sessionCounter">1 / 40</strong><span id="sessionTopic"></span></div><div class="progress-track"><span id="progressBar"></span></div></div>
+          <div id="sessionTimer" class="timer">60:00</div>
+        </div>
+        <div class="session-layout">
+          <article class="question-card card">
+            <div class="question-meta"><span id="modeBadge" class="badge">Teste</span><button id="bookmarkBtn" class="bookmark" aria-label="Marcar pergunta">☆</button></div>
+            <h2 id="questionText" class="question-text"></h2>
+            <div id="answers" class="answers"></div>
+            <div id="feedback" class="feedback hidden"></div>
+            <div id="sourceBox" class="inline-note hidden"></div>
+            <div class="question-actions">
+              <button id="prevBtn" class="btn ghost">← Anterior</button>
+              <button id="nextBtn" class="btn primary">Seguinte →</button>
+            </div>
+          </article>
+          <aside class="navigator card">
+            <div class="nav-head"><strong>Questões</strong><span id="answeredCount">0/0</span></div>
+            <div id="questionNav" class="question-nav"></div>
+            <div class="legend"><span><i class="dot answered"></i>Respondida</span><span><i class="dot current"></i>Atual</span></div>
+            <button id="finishSessionBtn" class="btn primary full">Terminar</button>
+          </aside>
+        </div>
+      </section>
+
+      <section id="view-results" class="view hidden">
+        <div class="results-hero card">
+          <div class="result-dial" id="resultDial"><div><b id="resultPct">0%</b><span>resultado</span></div></div>
+          <div><span class="eyebrow">SESSÃO CONCLUÍDA</span><h1 id="resultTitle">Resultado</h1><p id="resultMeta"></p>
+            <div class="result-stats"><span><b id="resultCorrect">0</b> certas</span><span><b id="resultWrong">0</b> erradas</span><span><b id="resultBlank">0</b> em branco</span></div>
+            <div class="row-actions"><button id="retryWrongBtn" class="btn primary">Treinar erros</button><button class="btn secondary" data-go="home">Voltar ao início</button></div>
+          </div>
+        </div>
+        <div class="review-toolbar"><div><span class="eyebrow">REVISÃO</span><h2>Pergunta a pergunta</h2></div><select id="reviewFilter"><option value="all">Todas</option><option value="wrong">Só erradas / em branco</option><option value="correct">Só certas</option></select></div>
+        <div id="reviewList" class="review-list"></div>
+      </section>
+
+      <section id="view-study" class="view hidden">
+        <div class="page-head"><div><span class="eyebrow">ESTUDO</span><h1>Banco de perguntas</h1><p>Pesquisa por matéria, pergunta ou resposta. A fonte usada aparece em cada questão.</p></div></div>
+        <div class="study-tabs"><button class="tab active" data-study-tab="questions">Perguntas</button><button class="tab" data-study-tab="bookmarks">Marcadas</button></div>
+        <div id="studyQuestions">
+          <div class="filters card"><input id="searchQuestions" type="search" placeholder="Pesquisar pergunta, resposta ou fonte…"><select id="studyTopic"></select></div>
+          <div id="questionLibrary" class="library-list"></div>
+        </div>
+        <div id="studyBookmarks" class="hidden"><div id="bookmarkLibrary" class="library-list"></div></div>
+      </section>
+
+      <section id="view-stats" class="view hidden">
+        <div class="page-head"><div><span class="eyebrow">ESTATÍSTICAS</span><h1>O teu progresso</h1><p id="syncStatus">Guardado neste dispositivo.</p></div><button id="resetAllBtn" class="btn danger">Apagar dados</button></div>
+        <div class="stats-cards"><div class="stat card"><span>Respostas</span><b id="statAttempts">0</b></div><div class="stat card"><span>Acertos</span><b id="statRate">0%</b></div><div class="stat card"><span>Sessões</span><b id="statSessions">0</b></div><div class="stat card"><span>Banco visto</span><b id="statCoverage">0%</b></div></div>
+        <div class="row-actions" style="margin:0 0 22px 0"><button id="exportStatsBtn" class="btn secondary">Exportar progresso</button><button id="importStatsBtn" class="btn secondary">Importar progresso</button><input id="importStatsFile" type="file" accept="application/json" class="hidden"></div>
+        <div class="section-head"><div><span class="eyebrow">MATÉRIAS</span><h2>Desempenho</h2></div></div><div id="topicStats" class="topic-grid"></div>
+        <div class="section-head"><div><span class="eyebrow">PONTOS FRACOS</span><h2>Mais erradas</h2></div></div><div id="weakList" class="library-list"></div>
+        <div class="section-head"><div><span class="eyebrow">HISTÓRICO</span><h2>Últimas sessões</h2></div></div><div id="historyList" class="history-list"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <button data-go="home" class="active"><span>⌂</span>Início</button>
+      <button data-open-config="practice"><span>✓</span>Treinar</button>
+      <button data-go="study"><span>▤</span>Estudar</button>
+      <button data-go="stats"><span>◫</span>Progresso</button>
+    </nav>
+  </div>
+
+  <dialog id="configDialog" class="dialog">
+    <form method="dialog" class="dialog-card card">
+      <div class="dialog-head"><div><span class="eyebrow">NOVA SESSÃO</span><h2 id="configTitle">Configurar treino</h2></div><button value="cancel" class="icon-btn">×</button></div>
+      <input type="hidden" id="configMode" value="practice">
+      <label class="field"><span>Matéria</span><select id="configTopic"></select></label>
+      <div class="two-cols">
+        <label class="field"><span>Perguntas</span><select id="configCount"><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="40" selected>40</option><option value="60">60</option><option value="100">100</option><option value="all">Todas disponíveis</option></select></label>
+        <label class="field"><span>Tempo</span><select id="configTime"><option value="0">Sem limite</option><option value="1800">30 min</option><option value="2700">45 min</option><option value="3600" selected>60 min</option><option value="5400">90 min</option></select></label>
+      </div>
+      <label class="check"><input id="shuffleQuestions" type="checkbox" checked><span><b>Baralhar perguntas</b><small>Nova ordem em cada sessão.</small></span></label>
+      <label class="check"><input id="shuffleAnswers" type="checkbox" checked><span><b>Baralhar respostas</b><small>A opção correta é preservada.</small></span></label>
+      <label id="smartOnlyRow" class="check hidden"><input id="smartOnly" type="checkbox"><span><b>Dar prioridade às mais erradas</b><small>Usa o teu histórico.</small></span></label>
+      <button id="startConfiguredBtn" value="cancel" class="btn primary full" type="button">Começar</button>
+    </form>
+  </dialog>
+
+  <dialog id="adminDialog" class="dialog">
+    <div class="dialog-card card" style="width:min(760px,calc(100vw - 26px))">
+      <div class="dialog-head"><div><span class="eyebrow">ADMINISTRAÇÃO</span><h2>Utilizadores autorizados</h2></div><button id="closeAdmin" class="icon-btn">×</button></div>
+      <div class="inline-note">Adiciona o número mecanográfico e entrega ao utilizador o código de ativação gerado. O código é de utilização única.</div>
+      <div class="admin-add-grid">
+        <label class="field"><span>N.º mecanográfico</span><input id="adminNewMechanical" inputmode="numeric" maxlength="6" placeholder="6 dígitos"></label>
+        <label class="field"><span>Nome (opcional)</span><input id="adminNewName" maxlength="80" placeholder="Ex.: João"></label>
+        <button id="adminAddBtn" class="btn primary">Adicionar</button>
+      </div>
+      <div id="adminGeneratedCode" class="activation-code hidden"></div>
+      <div class="section-head"><div><span class="eyebrow">ACESSOS</span><h2>Lista</h2></div><button id="adminRefreshBtn" class="btn ghost">Atualizar</button></div>
+      <div id="adminUsers" class="admin-users"></div>
+    </div>
+  </dialog>
+
+  <dialog id="installDialog" class="dialog">
+    <div class="dialog-card card">
+      <div class="dialog-head"><div><span class="eyebrow">IPHONE / IPAD</span><h2>Instalar como aplicação</h2></div><button id="closeInstall" class="icon-btn">×</button></div>
+      <ol class="install-steps"><li>Abre este site no <b>Safari</b>.</li><li>Carrega em <b>Partilhar</b>.</li><li>Escolhe <b>Adicionar ao ecrã principal</b>.</li><li>Confirma em <b>Adicionar</b>.</li></ol>
+      <div class="inline-note">A interface pode ser instalada como PWA. Por segurança, o login e o carregamento do banco de perguntas exigem ligação à internet; o progresso é sincronizado na conta.</div>
+      <button id="nativeInstallBtn" class="btn primary full hidden">Instalar neste dispositivo</button>
+    </div>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
